@@ -1,0 +1,71 @@
+{
+  "name": "sprucekit",
+  "version": "1.0.0",
+  "repository": "ssh://git@github.com:spruceid/sprucekit.git",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/"
+  },
+  "private": true,
+  "workspaces": [
+    "packages/*",
+    "examples/*"
+  ],
+  "scripts": {
+    "postinstall": "yarn clean && yarn build:packages",
+    "build": "lerna run build",
+    "build:packages": "lerna run --ignore \"sprucekit-test-*\" build",
+    "build:examples": "lerna run --scope \"sprucekit-test-*\" build",
+    "clean": "lerna run clean",
+    "reset": "rm -rf node_modules packages/**/dist packages/**/node_modules examples/**/dist examples/**/node_modules examples/**/.next",
+    "test": "jest --config ./.jest.config.ts --runInBand --detectOpenHandles --forceExit",
+    "test:sdk": "yarn test --selectProjects @spruceid/sprucekit",
+    "lint": "eslint . --ignore-path .gitignore --ext .ts,.tsx,.js",
+    "lint:fix": "yarn lint --fix",
+    "documentation": "lerna run doc && yarn documentation:reference",
+    "bootstrap": "lerna bootstrap",
+    "examples": "concurrently \"yarn test-app start\" \"yarn express-api start\"",
+    "graph": "nx graph",
+    "sdk": "yarn workspace @spruceid/sprucekit",
+    "core": "yarn workspace @spruceid/sprucekit-core",
+    "server": "yarn workspace @spruceid/sprucekit-server",
+    "test-app": "yarn workspace sprucekit-test-app",
+    "next-app": "yarn workspace sprucekit-test-next",
+    "svelte-app": "yarn workspace sprucekit-test-sveltekit",
+    "express-api": "yarn workspace sprucekit-test-express-api",
+    "start:test-app": "yarn test-app start",
+    "start:test-api": "yarn express-api start",
+    "prepare-release": "changeset version",
+    "build-release": "yarn reset && yarn install && yarn build",
+    "publish-packages": "yarn build-release && changeset publish",
+    "test:e2e": "start-test 'yarn start:test-app' 3000 'SPRUCEKIT_SIGNING_KEY=test_key yarn start:test-api' 3001 'SECRET_WORDS=\"test test test test test test test test test test test junk\" synpress run'"
+  },
+  "devDependencies": {
+    "@types/jquery": "^3.5.16",
+    "@changesets/cli": "^2.25.0",
+    "@synthetixio/synpress": "^3.7.1",
+    "@types/jest": "^29.2.3",
+    "concurrently": "^7.3.0",
+    "cypress": "^12.14.0",
+    "eslint": "^8.28.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "eth-testing": "^1.14.0",
+    "jest": "^29.5.0",
+    "jest-environment-jsdom": "^29.5.0",
+    "lerna": "^5.1.2",
+    "nx": "^14.5.4",
+    "rimraf": "^3.0.2",
+    "start-server-and-test": "^1.14.0",
+    "supertest": "^6.3.2",
+    "ts-jest": "^29.0.3",
+    "ts-loader": "^9.3.0",
+    "ts-node": "^10.8.0",
+    "typescript": "^4.8.4",
+    "yarn": "^1.22.19"
+  },
+  "resolutions": {
+    "html-webpack-plugin": "^5.0.0"
+  },
+  "packageManager": "yarn@3.2.0"
+}

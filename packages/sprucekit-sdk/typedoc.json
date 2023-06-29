@@ -1,0 +1,6 @@
+{
+    "entryPoints": ["src/index.ts"],
+    "out": "../../documentation/reference/sprucekit-sdk",
+    "plugin": ["typedoc-plugin-markdown"],
+    "theme": "markdown"
+}

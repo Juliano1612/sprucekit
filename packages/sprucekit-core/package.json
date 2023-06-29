@@ -1,0 +1,82 @@
+{
+  "name": "@spruceid/sprucekit-core",
+  "version": "0.1.0",
+  "description": "SpruceKit core library",
+  "author": "Spruce Systems Inc.",
+  "license": "Apache-2.0 OR MIT",
+  "homepage": "https://github.com/spruceid/sprucekit/packages/sprucekit-core#readme",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "bugs": {
+    "url": "https://github.com/spruceid/sprucekit/issues"
+  },
+  "directories": {
+    "src": "src"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.js",
+      "default": "./dist/index.js"
+    },
+    "./server": {
+      "types": "./dist/server/index.d.js",
+      "default": "./dist/server/index.js"
+    },
+    "./client": {
+      "types": "./dist/client/index.d.js",
+      "default": "./dist/client/index.js"
+    }
+  },
+  "typesVersions": {
+    "*": {
+      "*": [
+        "dist/index.d.ts"
+      ],
+      "server": [
+        "dist/server/index.d.ts"
+      ],
+      "client": [
+        "dist/client/index.d.ts"
+      ]
+    }
+  },
+  "scripts": {
+    "build": "tsc",
+    "doc": "yarn doc:extractor && yarn doc:documenter",
+    "doc:extractor": "api-extractor run",
+    "doc:documenter": "api-documenter generate -i temp -o ../../documentation/reference/sprucekit-core"
+  },
+  "engines": {
+    "node": ">=18.16.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/spruceid/sprucekit.git"
+  },
+  "dependencies": {
+    "@spruceid/sprucekit-wasm": "0.0.1",
+    "axios": "^0.27.2",
+    "ethers": "^6.6.0",
+    "events": "^3.3.0",
+    "express": "^4.18.1",
+    "express-session": "^1.17.3",
+    "siwe": "^2.1.4"
+  },
+  "devDependencies": {
+    "@microsoft/api-documenter": "^7.19.4",
+    "@microsoft/api-extractor": "^7.33.7",
+    "@types/node": "^18.15.13",
+    "@typescript-eslint/eslint-plugin": "^5.23.0",
+    "@typescript-eslint/parser": "^5.23.0",
+    "eslint": "^8.15.0",
+    "eslint-config-prettier": "^8.5.0",
+    "ethers": "^6.6.0",
+    "prettier": "^2.6.2"
+  },
+  "peerDependencies": {
+    "ethers": "^6.0.8"
+  },
+  "files": [
+    "dist"
+  ]
+}

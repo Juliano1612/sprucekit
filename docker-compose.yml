@@ -1,0 +1,18 @@
+services:
+  example-app:
+    container_name: sprucekit-example-app-dev
+    image: spruce/sprucekit-test-app-dev
+    build:
+      context: .
+      dockerfile: sprucekit-test-app.Dockerfile
+    ports:
+      - "3000:3000"
+  sprucekit-server:
+    container_name: sprucekit-server-dev
+    image: spruce/sprucekit-server-dev
+    env_file: .env
+    build:
+      context: .
+      dockerfile: sprucekit-server.Dockerfile
+    ports: 
+      - "8443:8443"
