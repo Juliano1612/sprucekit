@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { SpruceKit } from '@spruceid/sprucekit';
 import Header from './components/Header';
 import Title from './components/Title';
@@ -8,8 +8,10 @@ import Input from './components/Input';
 import Button from './components/Button';
 import AccountInfo from './components/AccountInfo';
 import { useWeb3Modal } from '@web3modal/react';
-import { useSigner } from 'wagmi';
+import { getWalletClient } from '@wagmi/core'
 import StorageModule from './components/StorageModule';
+import { walletClientToEthers5Signer } from './utils/web3modalV2Settings';
+import { useWalletClient } from 'wagmi';
 import './App.css';
 
 declare global {
@@ -21,7 +23,7 @@ declare global {
 function App() {
 
   const { open: openWeb3Modal } = useWeb3Modal();
-  const { isLoading: wagmiIsLoading } = useSigner();
+  const { data: walletClient } = useWalletClient()
 
   const [loading, setLoading] = useState(false);
 
@@ -50,9 +52,7 @@ function App() {
   // sprucekit module config
   const [storageEnabled, setStorageEnabled] = useState<string>('Off');
 
-  const getSpruceKitConfig = () => {
-    let sprucekitConfig: Record<string, any> = {};
-
+  const getSpruceKitConfig = (sprucekitConfig: Record<string, any> = {}) => {
     if (server === 'On') {
       sprucekitConfig = {
         providers: {
@@ -123,25 +123,60 @@ function App() {
     return sprucekitConfig;
   };
 
-
-  const sprucekitHandler = async () => {
-    if (provider === 'Web3Modal v2') {
-      return openWeb3Modal();
-    }
+  const signInUsingWeb3Modal = async (walletClient: any) => {
+    const chainId = await walletClient.getChainId();
+    const newWalletClient = await getWalletClient({ chainId });
+    const signer = walletClientToEthers5Signer(newWalletClient as any);
+    if (sprucekit) return;
 
     setLoading(true);
-    let sprucekitConfig = getSpruceKitConfig();
+    const sprucekitConfig = getSpruceKitConfig({
+      provider: {
+        web3: {
+          driver: signer.provider
+        }
+      }
+    });
 
-    const sprucekit = new SpruceKit(sprucekitConfig);
-    window.sprucekit = sprucekit;
+    const sprucekitProvider = new SpruceKit(sprucekitConfig);
 
     try {
-      await sprucekit.signIn();
-      setSpruceKit(sprucekit);
+      await sprucekitProvider.signIn();
+      setSpruceKit(sprucekitProvider);
     } catch (err) {
       console.error(err);
     }
     setLoading(false);
+  }
+
+  useEffect(() => {
+    if (walletClient) {
+      signInUsingWeb3Modal(walletClient);
+    } else {
+      sprucekit?.signOut?.();
+      setSpruceKit(null);
+    }
+    // eslint-disable-next-line
+  }, [walletClient]);
+
+  const sprucekitHandler = async () => {
+    if (provider === 'Web3Modal v2') {
+      return openWeb3Modal();
+    } else {
+      setLoading(true);
+      let sprucekitConfig = getSpruceKitConfig();
+
+      const sprucekit = new SpruceKit(sprucekitConfig);
+      window.sprucekit = sprucekit;
+
+      try {
+        await sprucekit.signIn();
+        setSpruceKit(sprucekit);
+      } catch (err) {
+        console.error(err);
+      }
+      setLoading(false);
+    }
   };
 
   const sprucekitLogoutHandler = async () => {
@@ -149,7 +184,7 @@ function App() {
       return openWeb3Modal();
     }
 
-    sprucekit?.signOut();
+    sprucekit?.signOut?.();
     setSpruceKit(null);
   };
 
@@ -166,7 +201,7 @@ function App() {
                 <Button
                   id='signOutButton'
                   onClick={sprucekitLogoutHandler}
-                  loading={loading || wagmiIsLoading}
+                  loading={loading}
                 >
                   SIGN-OUT
                 </Button>
@@ -179,7 +214,7 @@ function App() {
                 <Button
                   id='signInButton'
                   onClick={sprucekitHandler}
-                  loading={loading || wagmiIsLoading}
+                  loading={loading}
                 >
                   SIGN-IN WITH ETHEREUM
                 </Button>
