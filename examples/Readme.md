@@ -19,7 +19,7 @@ To run the examples, you'll need to build the packages first. The best way to do
 yarn
 ```
 
-Then, you can run sprucekit-test-dapp and sprucekit-test-express-api:
+Then, you can run sprucekit-test-app and sprucekit-test-express-api:
 ```sh
 # From the root of the repo
 yarn examples

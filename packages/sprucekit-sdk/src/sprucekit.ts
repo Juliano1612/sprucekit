@@ -55,7 +55,7 @@ export class SpruceKit {
 
   /** UserAuthorization Module
    *
-   * Handles the capabilities that a user can provide a dapp, specifically
+   * Handles the capabilities that a user can provide a app, specifically
    * authentication and authorization. This resource handles all key and
    * signing capabilities including:
    * - ethereum provider, wallet connection, SIWE message creation and signing
