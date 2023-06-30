@@ -149,7 +149,7 @@ test("Should resolve Lens profile on Mainnet with a message advertising about th
   await expect(
     spruceKitResolveLens(provider, "0x96F7fB7ed32640d9D3a982f67CD6c09fc53EBEF1")
   ).resolves.toEqual(
-    `Can't resolve Lens to 0x96F7fB7ed32640d9D3a982f67CD6c09fc53EBEF1 on network 'mainnet'. Use 'matic' (Polygon) or 'matic-mumbai' (Mumbai) instead.`
+    `Can't resolve Lens to 0x96F7fB7ed32640d9D3a982f67CD6c09fc53EBEF1 on network 'homestead'. Use 'matic' (Polygon) or 'maticmum' (Mumbai) instead.`
   );
 }, 30000);
 

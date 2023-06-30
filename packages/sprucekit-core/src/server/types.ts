@@ -6,7 +6,7 @@ import {
   SpruceKitRPCProvider,
 } from "../types";
 import { EventEmitter } from "events";
-import { Provider } from "ethers";
+import { ethers } from 'ethers';
 import { SiweMessage, SiweError } from "siwe";
 
 /** Configuration interface for sprucekit-server */
@@ -107,7 +107,7 @@ export abstract class SpruceKitServerBaseClass extends EventEmitter {
   /** Axios instance. */
   protected _api;
   /** EthersJS provider. */
-  public provider: Provider;
+  public provider: ethers.providers.BaseProvider;
   /** Session is a configured instance of express-session middleware. */
   public session: RequestHandler;
   /**

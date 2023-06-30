@@ -16,7 +16,7 @@ import {
   SpruceKitServerBaseClass,
   spruceKitLog as spruceKitLog,
 } from '@spruceid/sprucekit-core/server';
-import { AbstractProvider, verifyMessage } from 'ethers';
+import { providers, utils } from 'ethers';
 import { SessionData, SessionOptions } from 'express-session';
 import session from 'express-session';
 import { RequestHandler } from 'express';
@@ -32,7 +32,7 @@ export class SpruceKitServer extends SpruceKitServerBaseClass {
   /** Axios instance. */
   protected _api: AxiosInstance;
   /** EthersJS provider. */
-  public provider: AbstractProvider;
+  public provider: providers.BaseProvider;
   /** Session is a configured instance of express-session middleware. */
   public session: RequestHandler;
 
@@ -173,7 +173,7 @@ export class SpruceKitServer extends SpruceKitServerBaseClass {
        *  enabled would make all the logs to be of Gnosis Type
        **/
       smartContractWalletOrCustomMethod = !(
-        verifyMessage(data.prepareMessage(), signature) === data.address
+        utils.verifyMessage(data.prepareMessage(), signature) === data.address
       );
     } catch (error) {
       console.error(error);
@@ -226,7 +226,7 @@ export class SpruceKitServer extends SpruceKitServerBaseClass {
    * limited by 10. To get other pages you must to pass the pageCursor parameter.
    *
    * Lens profiles can be resolved on the Polygon Mainnet (matic) or Mumbai Testnet
-   * (matic-mumbai). Visit https://docs.lens.xyz/docs/api-links for more information.
+   * (maticmumisit https://docs.lens.xyz/docs/api-links for more information.
    *
    * @param address - Ethereum User address.
    * @param pageCursor - Page cursor used to paginate the request. Default to

@@ -1,4 +1,4 @@
-import { BrowserProvider } from "ethers";
+import { providers } from 'ethers';
 import { gnosisDelegatorsFor } from "../utils/gnosis-extension";
 import { ConfigOverrides, ISpruceKitConnected, SpruceKitExtension } from "./types";
 
@@ -273,7 +273,7 @@ const getBaseModal = (): Element => {
  */
 export class GnosisDelegation implements SpruceKitExtension {
   /** Web3 Provider. */
-  public web3provider: BrowserProvider;
+  public web3provider: providers.Web3Provider;
   /** Selected delegation option.  */
   public selectedOption = "";
   /** Continue with the SpruceKit flow with a successfull promise. */

@@ -1,4 +1,4 @@
-import { FetchRequest, Networkish } from "ethers";
+import { providers } from 'ethers';
 import { ConnectionInfo } from "ethers/lib/utils";
 import { SpruceKitClientSession } from "./client";
 import type { AxiosRequestConfig } from "axios";
@@ -118,7 +118,7 @@ export enum SpruceKitInfuraProviderNetworks {
   GOERLI = "goerli",
   KOVAN = "kovan",
   POLYGON = "matic",
-  POLYGON_MUMBAI = "matic-mumbai",
+  POLYGON_MUMBAI = "maticmum",
   OPTIMISM = "optimism",
   OPTIMISM_KOVAN = "optimism-kovan",
   ARBITRUM = "arbitrum",
@@ -152,7 +152,7 @@ export enum SpruceKitAlchemyProviderNetworks {
   GOERLI = "goerli",
   KOVAN = "kovan",
   POLYGON = "matic",
-  POLYGON_MUMBAI = "matic-mumbai",
+  POLYGON_MUMBAI = "maticmum",
   OPTIMISM = "optimism",
   OPTIMISM_KOVAN = "optimism-kovan",
   ARBITRUM = "arbitrum",
@@ -227,8 +227,8 @@ export const isSpruceKitAnkrProvider = (
 /** Custom provider settings. */
 export type SpruceKitCustomProvider = {
   service: SpruceKitRPCProviders.SpruceKitCustomProvider;
-  url?: string | FetchRequest;
-  network?: Networkish;
+  url?: string | ConnectionInfo;
+  network?: providers.Networkish;
 };
 
 /** Type-Guard for SpruceKitCustomProvider. */
@@ -241,7 +241,7 @@ export const isSpruceKitCustomProvider = (
 export type SpruceKitGenericProvider = {
   service: SpruceKitRPCProviders;
   url?: string | ConnectionInfo;
-  network?: Networkish;
+  network?: providers.Networkish;
   apiKey?: string | SpruceKitInfuraProviderProjectSettings;
 };
 

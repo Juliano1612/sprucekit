@@ -3,7 +3,7 @@ import { SiweMessage } from 'siwe';
 import { SiweGnosisVerify } from '../src';
 import { GnosisDelegation } from '../src/client';
 
-const provider = new ethers.InfuraProvider(
+const provider = new ethers.providers.InfuraProvider(
   'goerli',
   '49a0efa3aaee4fd99797bfa94d8ce2f1'
 );

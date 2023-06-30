@@ -1,7 +1,7 @@
 /* eslint-disable no-shadow */
 import { sprucekitSession as spruceKitSession } from "@spruceid/sprucekit-wasm";
 import { AxiosInstance } from "axios";
-import { BrowserProvider } from "ethers";
+import { providers } from "ethers";
 import {
   SpruceKitEnsData,
   SpruceKitEnsResolveOptions,
@@ -102,7 +102,7 @@ export interface ISpruceKitConnected {
   /** List of enabled extensions. */
   extensions: SpruceKitExtension[];
   /** Web3 provider. */
-  provider: BrowserProvider;
+  provider: providers.Web3Provider;
   /** Promise that is initialized on construction to run the "afterConnect" methods of extensions. */
   afterConnectHooksPromise: Promise<void>;
   /** Method to verify if extension is enabled. */

@@ -1,4 +1,4 @@
-import { Signer, BrowserProvider } from "ethers";
+import { providers, Signer } from "ethers";
 import {
   initialized,
   sprucekitSession as spruceKitSession,
@@ -24,7 +24,7 @@ import {
 
 /** UserAuthorization Module
  *
- * Handles the capabilities that a user can provide a dapp, specifically
+ * Handles the capabilities that a user can provide a app, specifically
  * authentication and authorization. This resource handles  all key and
  * signing capabilities including:
  * - ethereum provider, wallet connection, SIWE message creation and signing
@@ -34,7 +34,7 @@ import {
  */
 interface IUserAuthorization {
   /* properties */
-  provider: BrowserProvider;
+  provider: providers.Web3Provider;
   session?: SpruceKitClientSession;
 
   /* createUserAuthorization */
@@ -57,7 +57,7 @@ interface IUserAuthorization {
    * limited by 10. To get other pages you must pass the pageCursor parameter.
    *
    * Lens profiles can be resolved on the Polygon Mainnet (matic) or Mumbai
-   * Testnet (matic-mumbai). Visit https://docs.lens.xyz/docs/api-links for more
+   * Testnet (maticmum). Visit https://docs.lens.xyz/docs/api-links for more
    * information.
    *
    * @param address - Ethereum User address.
@@ -79,7 +79,7 @@ interface IUserAuthorization {
    * @returns signature;
    */
   signMessage(message: string): Promise<string>;
-  getSigner(): Promise<Signer>;
+  getSigner(): Signer;
   /* getUserAuthorization */
   // getSIWE
   // getSessionData
@@ -111,12 +111,12 @@ class UserAuthorizationInit {
    * @returns UserAuthorizationConnected instance.
    */
   async connect(): Promise<UserAuthorizationConnected> {
-    let provider: BrowserProvider;
+    let provider: providers.Web3Provider;
 
     // eslint-disable-next-line no-underscore-dangle
     if (!this.config.providers.web3.driver?._isProvider) {
       try {
-        provider = new BrowserProvider(this.config.providers.web3.driver);
+        provider = new providers.Web3Provider(this.config.providers.web3.driver);
       } catch (err) {
         // Provider creation error
         console.error(err);
@@ -188,7 +188,7 @@ class UserAuthorizationConnected implements ISpruceKitConnected {
     /** Enabled extensions. */
     public extensions: SpruceKitExtension[],
     /** EthersJS provider. */
-    public provider: BrowserProvider
+    public provider: providers.Web3Provider
   ) {
     this.afterConnectHooksPromise = this.applyExtensions();
     if (this.config.providers?.server?.host) {
@@ -375,8 +375,7 @@ class UserAuthorizationConnected implements ISpruceKitConnected {
     const defaults = {
       address: this.config.siweConfig?.address ?? walletAddress,
       walletAddress,
-      // @TODO: resolve the casting
-      chainId: Number((await this.provider._detectNetwork()).chainId),
+      chainId: await this.provider.getSigner().getChainId(),
       domain: globalThis.location.hostname,
       issuedAt: new Date().toISOString(),
       nonce: generateNonce(),
@@ -461,7 +460,7 @@ const SPRUCEKIT_DEFAULT_CONFIG: SpruceKitClientConfig = {
 
 class UserAuthorization implements IUserAuthorization {
   /** The Ethereum provider */
-  public provider: BrowserProvider;
+  public provider: providers.Web3Provider;
 
   /** The session representation (once signed in). */
   public session?: SpruceKitClientSession;
@@ -587,7 +586,7 @@ class UserAuthorization implements IUserAuthorization {
    * limited by 10. To get other pages you must to pass the pageCursor parameter.
    *
    * Lens profiles can be resolved on the Polygon Mainnet (matic) or Mumbai Testnet
-   * (matic-mumbai). Visit https://docs.lens.xyz/docs/api-links for more information.
+   * (maticmum). Visit https://docs.lens.xyz/docs/api-links for more information.
    *
    * @param address - Ethereum User address.
    * @param pageCursor - Page cursor used to paginate the request. Default to
@@ -643,7 +642,7 @@ class UserAuthorization implements IUserAuthorization {
    * Gets the provider that is connected and signed in.
    * @returns Provider.
    */
-  public getProvider(): BrowserProvider | undefined {
+  public getProvider(): providers.Web3Provider | undefined {
     return this.provider;
   }
 
@@ -652,8 +651,8 @@ class UserAuthorization implements IUserAuthorization {
    * @returns ethers.Signer
    * @see https://docs.ethers.io/v5/api/signer/#Signer
    */
-  public async getSigner(): Promise<Signer> {
-    return await this.provider.getSigner();
+  public getSigner(): Signer {
+    return this.provider.getSigner();
   }
 }
 

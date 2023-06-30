@@ -15,17 +15,10 @@ import {
   SpruceKitPocketProviderNetworks,
   SpruceKitRPCProvider,
 } from "../types";
-import {
-  getDefaultProvider,
-  AbstractProvider,
-  EtherscanProvider,
-  InfuraProvider,
-  AlchemyProvider,
-  PocketProvider,
-  CloudflareProvider,
-  AnkrProvider,
-  JsonRpcProvider,
-} from "ethers";
+import { 
+  providers, 
+  getDefaultProvider
+} from 'ethers';
 import axios from "axios";
 import { getProfilesQuery } from "./queries";
 
@@ -33,46 +26,45 @@ import { getProfilesQuery } from "./queries";
  * @param rpc - SpruceKitRPCProvider
  * @returns an ethers provider based on the RPC configuration.
  */
-export const getProvider = (rpc?: SpruceKitRPCProvider): AbstractProvider => {
+export const getProvider = (rpc?: SpruceKitRPCProvider): providers.BaseProvider => {
   if (!rpc) {
-    return getDefaultProvider("mainnet");
+    return getDefaultProvider();
   }
   if (isSpruceKitEtherscanProvider(rpc)) {
-    return new EtherscanProvider(
+    return new providers.EtherscanProvider(
       rpc.network ?? SpruceKitEtherscanProviderNetworks.MAINNET,
       rpc.apiKey
     );
   }
   if (isSpruceKitInfuraProvider(rpc)) {
-    return new InfuraProvider(
+    return new providers.InfuraProvider(
       rpc.network ?? SpruceKitInfuraProviderNetworks.MAINNET,
-      typeof rpc.apiKey === "string" ? rpc.apiKey : rpc.apiKey?.projectId,
-      typeof rpc.apiKey === "string" ? null : rpc.apiKey?.projectSecret
+      rpc.apiKey
     );
   }
   if (isSpruceKitAlchemyProvider(rpc)) {
-    return new AlchemyProvider(
+    return new providers.AlchemyProvider(
       rpc.network ?? SpruceKitAlchemyProviderNetworks.MAINNET,
       rpc.apiKey
     );
   }
   if (isSpruceKitCloudflareProvider(rpc)) {
-    return new CloudflareProvider();
+    return new providers.CloudflareProvider();
   }
   if (isSpruceKitPocketProvider(rpc)) {
-    return new PocketProvider(
+    return new providers.PocketProvider(
       rpc.network ?? SpruceKitPocketProviderNetworks.MAINNET,
       rpc.apiKey
     );
   }
   if (isSpruceKitAnkrProvider(rpc)) {
-    return new AnkrProvider(
+    return new providers.AnkrProvider(
       rpc.network ?? SpruceKitAnkrProviderNetworks.MAINNET,
       rpc.apiKey
     );
   }
   if (isSpruceKitCustomProvider(rpc)) {
-    return new JsonRpcProvider(rpc.url, rpc.network);
+    return new providers.JsonRpcProvider(rpc.url, rpc.network);
   }
   return getDefaultProvider("mainnet");
 };
@@ -85,7 +77,7 @@ export const getProvider = (rpc?: SpruceKitRPCProvider): AbstractProvider => {
  * @returns Object containing ENS data.
  */
 export const spruceKitResolveEns = async (
-  provider: AbstractProvider,
+  provider: providers.BaseProvider,
   /* User Address */
   address: string,
   resolveEnsOpts: {
@@ -129,7 +121,7 @@ export const spruceKitResolveEns = async (
 
 const LENS_API_LINKS = {
   matic: "https://api.lens.dev",
-  "matic-mumbai": "https://api-mumbai.lens.dev",
+  maticmum: "https://api-mumbai.lens.dev",
 };
 
 /**
@@ -137,7 +129,7 @@ const LENS_API_LINKS = {
  * limited by 10. To get other pages you must to pass the pageCursor parameter.
  *
  * Lens profiles can be resolved on the Polygon Mainnet (matic) or Mumbai Testnet
- * (matic-mumbai). Visit https://docs.lens.xyz/docs/api-links for more information.
+ * (maticmum). Visit https://docs.lens.xyz/docs/api-links for more information.
  *
  * @param address - Ethereum User address.
  * @param pageCursor - Page cursor used to paginate the request. Default to
@@ -146,7 +138,7 @@ const LENS_API_LINKS = {
  * @returns Object containing Lens profiles items and pagination info.
  */
 export const spruceKitResolveLens = async (
-  provider: AbstractProvider,
+  provider: providers.BaseProvider,
   /* Ethereum User Address. */
   address: string,
   /* Page cursor used to paginate the request. Default to first page. */
@@ -160,7 +152,7 @@ export const spruceKitResolveLens = async (
   const apiURL: string | null = LENS_API_LINKS[networkName];
 
   if (!apiURL) {
-    return `Can't resolve Lens to ${address} on network '${networkName}'. Use 'matic' (Polygon) or 'matic-mumbai' (Mumbai) instead.`;
+    return `Can't resolve Lens to ${address} on network '${networkName}'. Use 'matic' (Polygon) or 'maticmum' (Mumbai) instead.`;
   }
 
   let lens: { data: { profiles: SpruceKitLensProfilesResponse } };

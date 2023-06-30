@@ -5,13 +5,13 @@ import {
   VerifyOpts,
   VerifyParams,
 } from "siwe";
-import {
-  AbstractProvider,
-  Contract,
-  getAddress,
-  keccak256,
-  verifyMessage,
-} from "ethers";
+import { 
+  Contract, 
+  Event, 
+  providers, 
+  utils
+} from 'ethers';
+
 
 /** Contract Addresses by network. */
 const CONTRACT_ADDRESS = {
@@ -31,13 +31,13 @@ const CONTRACT_ABI = [
  * @param chainId - chain identifier.
  * @returns Network name.
  */
-const getNetworkName = (chainId: bigint): string => {
+const getNetworkName = (chainId: number): string => {
   switch (chainId) {
-    case BigInt(1):
+    case 1:
       return "mainnet";
-    case BigInt(2):
+    case 2:
       return "rinkeby";
-    case BigInt(420):
+    case 420:
       return "goerli";
     default:
       return "mainnet";
@@ -50,7 +50,7 @@ const getNetworkName = (chainId: bigint): string => {
  * @returns Contract address.
  */
 const getContractAddress = async (
-  provider: AbstractProvider
+  provider: providers.Provider
 ): Promise<string> =>
   provider
     .getNetwork()
@@ -64,10 +64,10 @@ const getContractAddress = async (
  */
 export const getGnosisDelegationHistoryEventsFor = async (
   address: string,
-  provider: AbstractProvider
-): Promise<Array<any>> => {
+  provider: providers.Provider
+): Promise<Array<Event>> => {
   const utf8Encode = new TextEncoder();
-  const siweSpace = keccak256(utf8Encode.encode(`siwe${address}`));
+  const siweSpace = utils.keccak256(utf8Encode.encode(`siwe${address}`));
 
   const contractAddress = await getContractAddress(provider);
 
@@ -106,7 +106,7 @@ export const getGnosisDelegationHistoryEventsFor = async (
  */
 export const gnosisDelegatorsFor = async (
   address: string,
-  provider: AbstractProvider
+  provider: providers.Provider
 ): Promise<Array<string>> => {
   let delegationHistoryEvents = await getGnosisDelegationHistoryEventsFor(
     address,
@@ -132,7 +132,7 @@ export const gnosisDelegatorsFor = async (
   return Promise.resolve([
     ...new Set(
       delegationHistoryEvents.map((event) =>
-        getAddress(event.topics[1].replace(/0x0+/, "0x"))
+        utils.getAddress(event.topics[1].replace(/0x0+/, "0x"))
       )
     ),
   ]);
@@ -148,7 +148,7 @@ export const gnosisDelegatorsFor = async (
 export const addressIsDelegateOf = async (
   delegateAddress: string,
   delegator: string,
-  provider: AbstractProvider
+  provider: providers.Provider
 ): Promise<boolean> => {
   const delegators = await gnosisDelegatorsFor(delegateAddress, provider);
   return delegators.includes(delegator);
@@ -168,7 +168,7 @@ export const SiweGnosisVerify = async (
   message: SiweMessage,
   _
 ): Promise<SiweResponse> => {
-  const addr = verifyMessage(message.prepareMessage(), params.signature);
+  const addr = utils.verifyMessage(message.prepareMessage(), params.signature);
   const isDelegate = await addressIsDelegateOf(
     addr,
     message.address,

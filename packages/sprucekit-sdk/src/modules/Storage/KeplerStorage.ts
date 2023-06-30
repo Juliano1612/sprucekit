@@ -56,8 +56,8 @@ export class KeplerStorage implements IStorage, IKepler {
     this.keplerModule = await kepler;
     (global as any).keplerModule = this.keplerModule;
 
-    const address = (await sprucekit.provider.getSigner()).address;
-    const chain = (await sprucekit.provider._detectNetwork()).chainId;
+    const address = await sprucekit.provider.getSigner().getAddress();
+    const chain = await sprucekit.provider.getSigner().getChainId();
 
     this.orbitId = `kepler:pkh:eip155:${chain}:${address}://default`;
 
@@ -206,13 +206,7 @@ export class KeplerStorage implements IStorage, IKepler {
   ): Promise<void> {
     const keplerHost = this.hosts[0];
     const { status: hostStatus, statusText } = await hostOrbit(
-      {
-        ...(await this.userAuth.getSigner()),
-        getChainId: async () =>
-          this.userAuth.provider
-            ._detectNetwork()
-            .then(({ chainId }) => chainId),
-      },
+      this.userAuth.getSigner(),
       keplerHost,
       this.orbitId,
       this.domain

@@ -11,7 +11,7 @@ export interface WalletProvider {
   /** Returns the account address. */
   getAddress(): Promise<string>;
   /** Returns the chain ID that this wallet is connected to. */
-  getChainId(): Promise<bigint>;
+  getChainId(): Promise<number>;
   /** Performs a `personal_sign` on the message and returns the signature as a hex string of the
    * format `"0x<65 bytes>"`.
    */
